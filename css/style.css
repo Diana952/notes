@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+
+#id {
+    width: 1200px;
+    height: 100vh;
+}
+
+.tasks {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.col-itm {
+    border: 1px solid #a9a9fc;
+    border-radius: 10px;
+    padding: 10px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    background: #a9a9fc;
+    width: 100px;
+    height: 50px;
+    border-radius: 20px;
+    border: none;
+}
