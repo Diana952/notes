@@ -2,40 +2,121 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 body {
+    background-color: #d5deff;
+}
+
+header {
+    width: 100vw;
+    background-color: #ffffff;
+    height: 30px;
     display: flex;
-    justify-content: center;
-    margin-top: 60px;
+    align-items: center;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 20px;
+    padding-top: 20px;
 }
 
-#id {
-    width: 1200px;
-    height: 100vh;
+h1 {
+    color: #3f4149;
+    font-size: 20px;
 }
 
-.tasks {
+
+.desk {
+    margin-top: 40px;
+    height: 50%;
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    width: 50%;
 }
 
-.col-itm {
-    border: 1px solid #a9a9fc;
-    border-radius: 10px;
-    padding: 10px;
+.col {
+  width: 300px;
+}
+
+form {
     width: 300px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
 }
 
-button {
-    background: #a9a9fc;
-    width: 100px;
-    height: 50px;
-    border-radius: 20px;
+input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #3f4149;
+    margin-bottom: 10px;
+}
+label {
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.btn {
+    background-color: #3655c4;
+    padding: 10px;
+    color: white;
     border: none;
+}
+
+.btn:hover {
+    background-color: #253c8a;
+    transition: .2s;
+}
+
+form > h2, p {
+    margin-bottom: 20px;
+}
+
+form > p {
+    margin-top: 20px;
+}
+
+.desk {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.desk > div {
+    width: 700px;
+    height: 500px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    gap: 30px;
+}
+
+.col {
+    width: 33%;
+}
+
+.col-item {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.task-list-name {
+    font-weight: 1000;
+}
+
+.col > h2 {
+    margin-bottom: 20px;
+}
+
+.done {
+    text-decoration: line-through;
 }
