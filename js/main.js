@@ -23,11 +23,7 @@ Vue.component('col3', {
                     <div v-if='allDoneTasks' v-for="task in allDoneTasks" class="col-item">
                         <p class="task-list-name">{{ task.list_name }}</p>
                         <div v-for="t in task.tasks">
-                                <p v-bind:class="{ done: t.status }"> {{ t.task1 }}</p>
-                                <p v-bind:class="{ done: t.status }"> {{ t.task2 }}</p>
-                                <p v-bind:class="{ done: t.status }"> {{ t.task3 }}</p>
-                                <p v-bind:class="{ done: t.status }"> {{ t.task4 }}</p>
-                                <p v-bind:class="{ done: t.status }"> {{ t.task5 }}</p>
+                        <p v-bind:class="{ done: t.status }"> {{ t.task }}</p>
                         </div>
                     </div>
                 
@@ -69,11 +65,7 @@ Vue.component('col2', {
                     <div v-for="task in secondDoneTasks" class="col-item">
                         <p class="task-list-name">{{ task.list_name }}</p>
                         <div v-for="t in task.tasks">
-                                <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task1 }}</p>
-                                <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task2 }}</p>
-                                <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task3 }}</p>
-                                <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task4 }}</p>
-                                <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task5 }}</p>
+                        <p @click="allDoneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task }}</p>
                         </div>
                     </div>
                 
@@ -96,8 +88,13 @@ Vue.component('col2', {
                 task.status = true;
                 list.done++;
             }
-
-            if ((list.done / list.tasks.length) * 100 === 100) {
+            let count = 0;
+            for (let i = 0; i < 5; ++i) {
+                if (list.tasks[i].task !== null) {
+                    count++;
+                }
+            }
+            if ((list.done / count) * 100 === 100) {
                 console.log((list.done / list.tasks.length) * 100);
                 eventBus.$emit('allDone', list);
                 this.secondDoneTasks.splice(this.secondDoneTasks.indexOf(list), 1);
@@ -107,10 +104,10 @@ Vue.component('col2', {
     },
     mounted() {
         {
-            eventBus.$on('semiDone', data => {
+            eventBus.$on('semiDone', list => {
                     this.errors = [];
                     if (this.secondDoneTasks.length < 5) {
-                        this.secondDoneTasks.push(data);
+                        this.secondDoneTasks.push(list);
                     } else {
                         this.errors.push('Вы еще не завершили предыдущие задачи');
                     }
@@ -133,11 +130,7 @@ Vue.component('col1', {
                     <div v-for="task in firstColTasks" class="col-item">
                         <p class="task-list-name">{{ task.list_name }}</p>
                         <div v-for="t in task.tasks">
-                                <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task1 }}</p>
-                                <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task2 }}</p>
-                                <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task3 }}</p>
-                                <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task4 }}</p>
-                                <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task5 }}</p>
+                        <p @click="doneTask(task, t)" v-bind:class="{ done: t.status }"> {{ t.task }}</p>
                         </div>
                     </div>
                 
@@ -161,7 +154,15 @@ Vue.component('col1', {
                 list.done++;
             }
 
-            if ( (list.done / list.tasks.length) * 100 >= 50) {
+            let count = 0;
+
+            for (let i = 0; i < 5; ++i) {
+                if (list.tasks[i].task !== null) {
+                    count++;
+                }
+            }
+
+            if (list.done / count * 100 >= 50){
                 eventBus.$emit('semiDone', list);
                 this.firstColTasks.splice(this.firstColTasks.indexOf(list), 1);
             }
@@ -188,15 +189,15 @@ Vue.component('createTask', {
         <form @submit.prevent="onSubmit">
         <h2>Создать список</h2>
             <label class="list_name" for="list_name">Название</label>
-            <input type="text" v-model="list_name" id="list_name">
+            <input type="text" v-model="list_name" id="list_name" required>
              <p>Задачи</p>
-            <input type="text" v-model="task1" id="task1">      
+            <input type="text" v-model="task1" id="task1" required>      
             
             
-            <input type="text" v-model="task2" id="task2"> 
+            <input type="text" v-model="task2" id="task2" required> 
             
            
-            <input type="text" v-model="task3" id="task3">    
+            <input type="text" v-model="task3" id="task3" required>    
             
             
             <input type="text" v-model="task4" id="task4">
@@ -221,11 +222,11 @@ Vue.component('createTask', {
             let taskList = {
                 list_name: this.list_name,
                 tasks: [
-                    {task1: this.task1, status:false},
-                    {task2: this.task2, status:false},
-                    {task3: this.task3, status:false},
-                    {task4: this.task4, status:false},
-                    {task5: this.task5, status:false},
+                    {task: this.task1, status:false},
+                    {task: this.task2, status:false},
+                    {task: this.task3, status:false},
+                    {task: this.task4, status:false},
+                    {task: this.task5, status:false},
                 ],
                 done: 0
             }
