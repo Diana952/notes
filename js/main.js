@@ -3,14 +3,69 @@ let eventBus = new Vue ()
 Vue.component('desk', {
     template: `
     <div class='desk'>
-        <createTask></createTask>
-        <div>
-            <col1></col1>
-            <col2></col2>
-            <col3></col3>
-        </div>
+    <div v-if="errors" v-for="error in errors" class="errors" id="errors">
+    <p>{{ error }}</p>
+</div>
+<div>
+     <createTask></createTask>
+     <div>
+         <col1></col1>
+         <col2></col2>
+         <col3></col3>
+     </div>
+</div>
     </div>
     `,
+    data () {
+        return {
+            col1: [],
+            col2: [],
+            col3: [],
+            errors: []
+        }
+    },
+    mounted (){
+        eventBus.$on('error', error => {
+            this.errors.push(error);
+        })
+
+        eventBus.$on('task_list', data => {
+                this.errors = [];
+                if (this.col1.length < 3) {
+                    this.col1.push(data);
+                } else {
+                    eventBus.$emit('error', 'Вы еще не завершили предыдущие задачи');
+                }
+            }
+        )
+
+        eventBus.$on('semiDone', list => {
+                this.errors = [];
+                if (this.col2.length < 5) {
+                    this.col2.push(list);
+                } else {
+                    eventBus.$emit('error', 'Вы еще не завершили предыдущие задачи');
+                }
+            }
+        )
+
+        eventBus.$on('allDone', data => {
+                this.col3.push(data);
+            }
+        )
+    },
+    watch: {
+        col1 (newVal) {
+            if (newVal < 3){
+                this.errors.splice(0,this.errors.length);
+            }
+        },
+        col2 (newVal) {
+            if (newVal < 5){
+                this.errors.splice(0,this.errors.length);
+            }
+        }
+    }
 
 })
 
@@ -28,9 +83,6 @@ Vue.component('col3', {
                     </div>
                 
             </div>
-            <div v-if="errors" v-for="error in errors" class="errors"">
-                <p>{{ error }}</p>
-            </div>
             </div>
         
     `,
@@ -38,17 +90,12 @@ Vue.component('col3', {
         return {
 
             allDoneTasks: [],
-            errors: []
         }
     },
 
-    methods: {
-
-    },
     mounted() {
             {
                 eventBus.$on('allDone', data => {
-                        this.errors = [];
                         this.allDoneTasks.push(data);
                     }
                 )
@@ -61,7 +108,7 @@ Vue.component('col2', {
         
         <div class="col">
         <h2>50% выполнено</h2>
-            <div>
+        <div v-bind:class="{ disables: errors}">
                     <div v-for="task in secondDoneTasks" class="col-item">
                         <p class="task-list-name">{{ task.list_name }}</p>
                         <div v-for="t in task.tasks">
@@ -69,9 +116,6 @@ Vue.component('col2', {
                         </div>
                     </div>
                 
-            </div>
-            <div v-if="errors" v-for="error in errors" class="errors"">
-                <p>{{ error }}</p>
             </div>
         </div>
         
@@ -95,10 +139,8 @@ Vue.component('col2', {
                 }
             }
             if ((list.done / count) * 100 === 100) {
-                console.log((list.done / list.tasks.length) * 100);
                 eventBus.$emit('allDone', list);
                 this.secondDoneTasks.splice(this.secondDoneTasks.indexOf(list), 1);
-                console.log(2);
             }
         }
     },
@@ -109,8 +151,8 @@ Vue.component('col2', {
                     if (this.secondDoneTasks.length < 5) {
                         this.secondDoneTasks.push(list);
                     } else {
-                        this.errors.push('Вы еще не завершили предыдущие задачи');
-                    }
+                        eventBus.$emit('error', 'Вы еще не завершили предыдущие задачи');
+                    } 
                 }
               
             )
@@ -124,8 +166,11 @@ Vue.component('col2', {
 Vue.component('col1', {
     template: `
         <div class="col">
+        <div v-if="errors" v-for="error in errors" class="errors"">
+        <p>{{ error }}</p>
+        </div>
         <h2>0% выполнено</h2>
-            <div>
+        <div v-bind:class="{ disabled: block }">
                 
                     <div v-for="task in firstColTasks" class="col-item">
                         <p class="task-list-name">{{ task.list_name }}</p>
@@ -135,13 +180,11 @@ Vue.component('col1', {
                     </div>
                 
             </div>
-            <div v-if="errors" v-for="error in errors" class="errors"">
-                <p>{{ error }}</p>
-            </div>
         </div>
     `,
     data() {
         return {
+            block: false,
             selectedTask:null,
             firstColTasks:[],
             errors: []
@@ -175,12 +218,19 @@ Vue.component('col1', {
                     if (this.firstColTasks.length < 3) {
                         this.firstColTasks.push(data);
                     } else {
-                        this.errors.push('Вы еще не завершили предыдущие задачи');
+                        eventBus.$emit('error', 'Вы еще не завершили предыдущие задачи');
                     }
                 }
             )
             }
     },
+    watch: {
+        firstColTasks(newVal) {
+            if (this.firstColTasks.length === 3){
+                this.block = true
+            }
+        }
+    }
 })
 
 
