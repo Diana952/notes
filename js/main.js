@@ -27,6 +27,7 @@ Vue.component('col3', {
                         <div v-for="t in task.tasks">
                         <p v-bind:class="{ done: t.status }"> {{ t.task }}</p>
                         </div>
+                        <p>{{ task.date }}</p>
                     </div>
                 
             </div>
@@ -44,6 +45,7 @@ Vue.component('col3', {
         this.allDoneTasks = JSON.parse(localStorage.getItem("allDoneTasks")) || [];
         {
             eventBus.$on('allDone', data => {
+                    data.date = new Date(); 
                     this.allDoneTasks.push(data);
                     localStorage.setItem('allDoneTasks', JSON.stringify(this.allDoneTasks));
                 }
@@ -103,9 +105,7 @@ Vue.component('col2', {
                 eventBus.$emit('allDone', list);
                 this.secondDoneTasks.splice(this.secondDoneTasks.indexOf(list), 1);
             }
-            if (this.secondDoneTasks.length === 5) {
-                eventBus.$emit('block', true);
-            }
+          
         }
     },
     mounted() {
@@ -159,7 +159,6 @@ Vue.component('col1', {
     `,
     data() {
         return {
-            block: false,
             selectedTask:null,
             firstColTasks:[],
             errors: []
