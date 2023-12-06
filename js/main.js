@@ -41,13 +41,24 @@ Vue.component('col3', {
     },
 
     mounted() {
-            {
-                eventBus.$on('allDone', data => {
-                        this.allDoneTasks.push(data);
-                    }
-                )
-            }
+        this.allDoneTasks = JSON.parse(localStorage.getItem("allDoneTasks")) || [];
+        {
+            eventBus.$on('allDone', data => {
+                    this.allDoneTasks.push(data);
+                    localStorage.setItem('allDoneTasks', JSON.stringify(this.allDoneTasks));
+                }
+            )
+
+
+        }},
+    watch: {
+        allDoneTask: {
+            handler(newValue, oldValue) {
+                localStorage.setItem('allDoneTask', JSON.stringify(newValue));
+            },
+            deep: true
         }
+    }
 })
 
 Vue.component('col2', {
@@ -92,9 +103,13 @@ Vue.component('col2', {
                 eventBus.$emit('allDone', list);
                 this.secondDoneTasks.splice(this.secondDoneTasks.indexOf(list), 1);
             }
+            if (this.secondDoneTasks.length === 5) {
+                eventBus.$emit('block', true);
+            }
         }
     },
     mounted() {
+        this.secondDoneTasks = JSON.parse(localStorage.getItem('secondDoneTasks')) || [];
         {
             eventBus.$on('semiDone', list => {
                     if (this.secondDoneTasks.length < 5) {
@@ -109,10 +124,14 @@ Vue.component('col2', {
     
     },
     watch: {
-        secondDoneTasks(newVal){
-            if (this.secondDoneTasks.length < 5){
-                this.errors.splice(0, this.errors.length);
-            }
+        secondDoneTasks: {
+            handler(newValue, oldValue) {
+                if (this.secondDoneTasks.length < 5){
+                    this.errors.splice(0, this.errors.length);
+                }
+                localStorage.setItem('secondDoneTasks', JSON.stringify(newValue));
+            },
+            deep: true
         }
     }
 
@@ -168,6 +187,7 @@ Vue.component('col1', {
         }
     },
     mounted() {
+        this.firstColTasks = JSON.parse(localStorage.getItem("firstColTasks")) || [];
        {
             eventBus.$on('task_list', data => {
                     if (this.firstColTasks.length < 3) {
@@ -180,10 +200,14 @@ Vue.component('col1', {
             }
     },
     watch: {
-        firstColTasks(newVal){
+        firstColTasks: {
+            handler(newValue, oldValue) {
             if (this.firstColTasks.length < 3){
                 this.errors.splice(0, this.errors.length);
             }
+            localStorage.setItem('firstColTasks', JSON.stringify(newValue));
+        },
+        deep: true
         }
     }
 })
@@ -233,7 +257,8 @@ Vue.component('createTask', {
                     {task: this.task4, status:false},
                     {task: this.task5, status:false},
                 ],
-                done: 0
+                done: 0,
+                date: null
             }
             eventBus.$emit('task_list', taskList);
             this.list_name = null;
